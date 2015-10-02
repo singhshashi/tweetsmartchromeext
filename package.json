@@ -1,0 +1,36 @@
+{
+  "name": "tweetsmart",
+  "version": "0.0.1",
+  "description": "Tweet smarter by easily numbering all your tweets of a tweetstorm",
+  "dependencies": {
+    "flux": "^2.0.1",
+    "keymirror": "~0.1.0",
+    "object-assign": "^1.0.0",
+    "react": "^0.12.0"
+  },
+  "devDependencies": {
+    "browserify": "^6.2.0",
+    "envify": "^3.0.0",
+    "jest-cli": "^0.4.3",
+    "reactify": "^0.15.2",
+    "uglify-js": "~2.4.15",
+    "watchify": "^2.1.1"
+  },
+  "scripts": {
+    "watch":"watchify js/app.js -o 'uglifyjs -cm  > bundle.min.js' -v -d",
+    "sat": "npm run watch",
+    "build":"browserify js/app.js -t [envify --NODE_ENV production] | uglifyjs -cm > bin/bundle.min.js",
+    "start": "npm run build",
+    "test": "jest"
+  },
+  "author": "Shashi Singh",
+  "browserify": {
+    "transform": [
+      "reactify",
+      "envify"
+    ]
+  },
+  "jest": {
+    "rootDir": "./js"
+  }
+}
