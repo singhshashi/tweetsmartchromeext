@@ -7,9 +7,21 @@
     "default_icon":"images/icon.png",
     "default_popup":"popup.html"
   },
+  "background": {
+    "scripts": [
+      "chrome_ex_oauth.js",
+      "chrome_ex_oauthsimple.js",
+      "background.js"
+    ],
+    "persistent": false
+  },
+  "web_accessible_resources":[
+  "chrome_ex_oauth.html"
+  ],
   "permissions": [
     "activeTab",
-    "https://ajax.googleapis.com"
+    "storage",
+    "https://api.twitter.com/oauth/*"
   ]
 }
 
