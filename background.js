@@ -12,7 +12,6 @@
 
 
 
-
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
 
     console.log("background.js: " + JSON.stringify(request));
@@ -22,13 +21,22 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
 
     if (type == "background.twitterRequestToken")
     {
-        console.log(oauth.hasToken());
-        oauth.authorize(function(token,secret){
-            console.log(token + " " + secret);
-            sendResponse({success:true});
+        oauth.authorize(function(token,secret,userId,screenname){
+            sendResponse({success:true,userId:userId,screenName:screenname});
         });
-
+        return true;
     }
+
+    //if (type == "background.isSignedIn")
+    //{
+    //    if (oauth.hasToken())
+    //    {
+    //        sendResponse({signedIn:true});
+    //    }
+    //    else{
+    //        sendResponse({signedIn:false});
+    //    }
+    //}
 
 });
 

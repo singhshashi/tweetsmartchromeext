@@ -28,6 +28,8 @@ function ChromeExOAuth(url_request_token, url_auth_token, url_access_token,
       "ChromeExOAuth Library";
   this.key_token = "oauth_token";
   this.key_token_secret = "oauth_token_secret";
+  this.key_screenname = "twitter_screenname";
+  this.key_userid = "twitter_userid";
   this.callback_page = opt_args && opt_args['callback_page'] ||
       "chrome_ex_oauth.html";
   this.auth_params = {};
@@ -95,11 +97,10 @@ ChromeExOAuth.initBackgroundPage = function(oauth_config) {
  */
 ChromeExOAuth.prototype.authorize = function(callback) {
   if (this.hasToken()) {
-    callback(this.getToken(), this.getTokenSecret());
+    callback(this.getToken(), this.getTokenSecret(),this.getUserId(), this.getScreenName());
   } else {
-    window.chromeExOAuthOnAuthorize = function(token, secret) {
-      alert("Token: " + token + " Secret: " + secret);
-      callback(token, secret);
+    window.chromeExOAuthOnAuthorize = function(token, secret, userId, screenName) {
+      callback(token, secret,userId,screenName);
     };
     chrome.tabs.create({ 'url' :chrome.extension.getURL(this.callback_page) });
   }
@@ -265,8 +266,8 @@ ChromeExOAuth.initCallbackPage = function() {
   var oauth_config = background_page.chromeExOAuthConfig;
   var oauth = ChromeExOAuth.fromConfig(oauth_config);
   background_page.chromeExOAuthRedirectStarted = true;
-  oauth.initOAuthFlow(function (token, secret) {
-    background_page.chromeExOAuthOnAuthorize(token, secret);
+  oauth.initOAuthFlow(function (token, secret,userId,screen_name) {
+    background_page.chromeExOAuthOnAuthorize(token, secret,userId,screen_name);
     background_page.chromeExOAuthRedirectStarted = false;
     chrome.tabs.query({active: true, currentWindow: true}, function (tabs) {
       chrome.tabs.remove(tabs[0].id);
@@ -408,6 +409,38 @@ ChromeExOAuth.prototype.getToken = function() {
 };
 
 /**
+ * Saves the userid of the user who logged in.
+ * @param userid
+ */
+ChromeExOAuth.prototype.setUserId = function (userid) {
+  localStorage[this.key_userid + encodeURI(this.oauth_scope)] = userid;
+};
+
+/**
+ * Returns the userid of the logged in user
+ * @returns {String} The stored userid
+ */
+ChromeExOAuth.prototype.getUserId = function () {
+  return localStorage[this.key_userid + encodeURI(this.oauth_scope)];
+};
+
+/**
+ * Saves the @ScreenName of the logged in user.
+ * @param screen_name
+ */
+ChromeExOAuth.prototype.setScreenName = function (screen_name) {
+  localStorage[this.key_screenname + encodeURI(this.oauth_scope)] = screen_name;
+};
+
+/**
+ * Returns the @ScreenName of the logged in user.
+ * @returns {*}
+ */
+ChromeExOAuth.prototype.getScreenName = function () {
+  return localStorage[this.key_screenname + encodeURI(this.oauth_scope)];
+}
+
+/**
  * Stores an OAuth token secret for the configured scope.
  * @param {String} secret The secret to store.
  */
@@ -438,8 +471,6 @@ ChromeExOAuth.prototype.getTokenSecret = function() {
 ChromeExOAuth.prototype.initOAuthFlow = function(callback) {
   if (!this.hasToken()) {
     var params = ChromeExOAuth.getQueryStringParams();
-    console.log(params);
-    alert(params);
     if (params['chromeexoauthcallback'] == 'true') {
       var oauth_token = params['oauth_token'];
       var oauth_verifier = params['oauth_verifier']
@@ -453,7 +484,7 @@ ChromeExOAuth.prototype.initOAuthFlow = function(callback) {
       }, request_params);
     }
   } else {
-    callback(this.getToken(), this.getTokenSecret());
+    callback(this.getToken(), this.getTokenSecret(),this.getUserId(),this.getScreenName());
   }
 };
 
@@ -526,7 +557,6 @@ ChromeExOAuth.prototype.onRequestToken = function(callback, xhr) {
         }
       }
       console.log(callback);
-      alert(url);
       callback(url);
     } else {
       throw new Error("Fetching request token failed. Status " + xhr.status);
@@ -586,12 +616,17 @@ ChromeExOAuth.prototype.onAccessToken = function(callback, xhr) {
     var bg = chrome.extension.getBackgroundPage();
     if (xhr.status == 200) {
       var params = ChromeExOAuth.formDecode(xhr.responseText);
+      console.log(params);
       var token = params["oauth_token"];
       var secret = params["oauth_token_secret"];
+      var userId = params["user_id"];
+      var screen_name = params["screen_name"];
       this.setToken(token);
       this.setTokenSecret(secret);
+      this.setUserId(userId);
+      this.setScreenName(screen_name);
       bg.chromeExOAuthRequestingAccess = false;
-      callback(token, secret);
+      callback(token, secret, userId, screen_name);
     } else {
       bg.chromeExOAuthRequestingAccess = false;
       throw new Error("Fetching access token failed with status " + xhr.status);

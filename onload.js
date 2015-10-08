@@ -3,9 +3,6 @@
 // found in the LICENSE file.
 
 window.onload = function() {
-    //ChromeExOAuth.initCallbackPage();
+    ChromeExOAuth.initCallbackPage();
 }
 
-window.onclick = function(){
-  ChromeExOAuth.initCallbackPage();
-}
