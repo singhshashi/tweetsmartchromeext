@@ -1,6 +1,6 @@
  var oauth = ChromeExOAuth.initBackgroundPage({
               'request_url': 'https://api.twitter.com/oauth/request_token',
-              'authorize_url': 'https://api.twitter.com/oauth/authorize',
+              'authorize_url': 'https://api.twitter.com/oauth/authenticate',
               'access_url': 'https://api.twitter.com/oauth/access_token',
               'consumer_key': '4KivKOww0BUnsSnrz29Fysq8i',
               'consumer_secret': 'VprxAb1SAEzewUscPlhQF2iH2wtEC7yPj0ryhTI0piY9JXlFwJ',
@@ -27,16 +27,11 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
         return true;
     }
 
-    //if (type == "background.isSignedIn")
-    //{
-    //    if (oauth.hasToken())
-    //    {
-    //        sendResponse({signedIn:true});
-    //    }
-    //    else{
-    //        sendResponse({signedIn:false});
-    //    }
-    //}
+    if (type == "background.twitterSignOut")
+    {
+        oauth.clearTokens();
+        sendResponse({success:true});
+    }
 
 });
 

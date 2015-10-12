@@ -5,13 +5,28 @@ jest.dontMock('object-assign');
 jest.dontMock('../../utils/Utils');//shouldn't this be mocked?
 
 describe('TweetSmartStore', function(){
-    
+
     var TweetSmartActions = require('../../constants/TweetSmartActionTypes');
     var TweetSmartConstants;
     var AppDispatcher; 
     var TweetSmartStore; 
     var callback;
-    
+
+    var localStorageMock = (function() {
+        var store = {};
+        return {
+            getItem: function(key) {
+                return store[key];
+            },
+            setItem: function(key, value) {
+                store[key] = value.toString();
+            },
+            clear: function() {
+                store = {};
+            }
+        };
+    })();
+    Object.defineProperty(window, 'localStorage', { value: localStorageMock });
     
     var actionTweetStormComposeOneTweet = {
             actionType: TweetSmartActions.COMPOSE, 

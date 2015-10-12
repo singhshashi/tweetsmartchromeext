@@ -9,6 +9,7 @@ var State = require('./State');
 var AppState = State.AppState;
 var UIState = State.UIState;
 
+
 var CHANGE_EVENT = 'change';
 //const TWEET_LENGTH = 140;
 const WORD_SEPARATOR = ' ';
@@ -32,24 +33,24 @@ var TweetSmartStore = assign({}, EventEmitter.prototype, {
     },
     
     getTweetStorm: function(){
-        if (AppState.queuedtweets.length > 0)
+        if (AppState.queuedTweets.length > 0)
             {
-                return AppState.queuedtweets;
+                return AppState.queuedTweets;
             }
         
         var tweetStorm = [];
-        if (AppState.tweetstormtext.length > 0)
+        if (AppState.tweetStormText.length > 0)
         {
-            var spaceIndexArr = Utils.getArrayOfIndices(AppState.tweetstormtext,WORD_SEPARATOR);
+            var spaceIndexArr = Utils.getArrayOfIndices(AppState.tweetStormText,WORD_SEPARATOR);
             if (Utils.getMaxOfNumberArray(spaceIndexArr) <= TweetSmartConstants.TWEET_LENGTH)
             {
-                tweetStorm.push({key:0,text:AppState.tweetstormtext});
+                tweetStorm.push({key:0,text:AppState.tweetStormText});
             }
             else{
                     var splitPoints = [];
                     splitPoints.push(0);//initialize with 0 which is used later when splitting using substr
                     var i;
-                    var possibleNumberOfTweets = Math.floor(AppState.tweetstormtext.length/TweetSmartConstants.TWEET_LENGTH);
+                    var possibleNumberOfTweets = Math.floor(AppState.tweetStormText.length/TweetSmartConstants.TWEET_LENGTH);
 
                     var index = 0;
                     while(index != null)
@@ -72,7 +73,7 @@ var TweetSmartStore = assign({}, EventEmitter.prototype, {
                     for (i = 0; i < limit; i++) {
                         if(isNaN(splitPoints[i+1]))
                             {
-                                splitPointPairs.push({start:splitPoints[i],length:AppState.tweetstormtext.length - splitPoints[i]});
+                                splitPointPairs.push({start:splitPoints[i],length:AppState.tweetStormText.length - splitPoints[i]});
                             }
                         else{
                             splitPointPairs.push({start:splitPoints[i],length: splitPoints[i+1] - splitPoints[i]});                            
@@ -84,12 +85,12 @@ var TweetSmartStore = assign({}, EventEmitter.prototype, {
                     _.each(splitPointPairs, function(splitPointPair,index){
                         
                         var numberedTweet = '';
-                       if (AppState.numberingpositionatstart)
+                       if (AppState.numberingPositionAtStart)
                        {
-                         numberedTweet = (index + 1).toString() + '/' + this.length + ' ' +                  AppState.tweetstormtext.substr(splitPointPair.start,splitPointPair.length);
+                         numberedTweet = (index + 1).toString() + '/' + this.length + ' ' +                  AppState.tweetStormText.substr(splitPointPair.start,splitPointPair.length);
                        }                   
 else{
-      numberedTweet =  AppState.tweetstormtext.substr(splitPointPair.start,splitPointPair.length) + ' ' + (index + 1).toString() + '/' + this.length;
+      numberedTweet =  AppState.tweetStormText.substr(splitPointPair.start,splitPointPair.length) + ' ' + (index + 1).toString() + '/' + this.length;
 }
                         tweetStorm.push({key:index,text:numberedTweet});
                     },splitPointPairs);                
@@ -114,28 +115,27 @@ else{
 AppDispatcher.register(function(action){
     switch(action.actionType) {
         case TweetSmartActions.COMPOSE: 
-            AppState.tweetstormtext = action.text;
-            localStorage.setItem('tweetstormtext', AppState.tweetstormtext);
+            AppState.tweetStormText = action.text;
             TweetSmartStore.emitChange();
             break;  
         case TweetSmartActions.QUEUE_TWEETSTORM:
-            AppState.queuedtweets = [];
+            AppState.queuedTweets = [];
             _.each(action.tweetstorm, function(element, index){
-                AppState.queuedtweets.push({key: element.key, text:element.text, status: 0});
+                AppState.queuedTweets.push({key: element.key, text:element.text, status: 0});
             })
             UIState.composebox = false;
             UIState.tweetbutton = 'tweeting';
             TweetSmartStore.emitChange();
             break;
         case TweetSmartActions.TWEET_SUCCESS:
-            var successfulTweet = _.find(AppState.queuedtweets, function(twt){
+            var successfulTweet = _.find(AppState.queuedTweets, function(twt){
                 return twt.status == 0;
             });
             successfulTweet.status = 1;
             setTimeout(function(){TweetSmartStore.emitChange()}, 2500);
             break;
         case TweetSmartActions.TWEET_FAILURE:
-            var unsuccesfulTweet = _.find(AppState.queuedtweets, function(twt){
+            var unsuccesfulTweet = _.find(AppState.queuedTweets, function(twt){
                return twt.status == 0; 
             });
             unsuccesfulTweet.status = -1;
@@ -145,9 +145,8 @@ AppDispatcher.register(function(action){
         case TweetSmartActions.TWEETSTORM_SUCCESS:
             UIState.composebox = true;
             UIState.tweetbutton = 'success';
-            AppState.tweetstormtext = '';            
-            AppState.queuedtweets = [];
-            localStorage.setItem('tweetstormtext', AppState.tweetstormtext);
+            AppState.tweetStormText = '';
+            AppState.queuedTweets = [];
             TweetSmartStore.emitChange();
             break;
         case TweetSmartActions.TWEETSTORM_FAILURE:
@@ -160,7 +159,19 @@ AppDispatcher.register(function(action){
              TweetSmartStore.emitChange();
             break;
         case TweetSmartActions.CHANGE_NUMBERING_POSITION:
-            AppState.numberingpositionatstart = action.numberingpositionatstart;
+            AppState.numberingPositionAtStart = action.numberingpositionatstart;
+            TweetSmartStore.emitChange();
+            break;
+        case TweetSmartActions.SIGN_IN:
+            AppState.signedInTwitterUserId =  action.signedInTwitterUserId;
+            AppState.signedInScreenName = action.signedInScreenName;
+            AppState.signedIn = true;
+            TweetSmartStore.emitChange();
+            break;
+        case TweetSmartActions.SIGN_OUT:
+            AppState.signedIn = false;
+            AppState.signedInScreenName = "";
+            AppState.signedInTwitterUserId = -1;
             TweetSmartStore.emitChange();
             break;
     }

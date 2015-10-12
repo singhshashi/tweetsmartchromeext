@@ -7,18 +7,34 @@ var Settings = require('../stores/Settings');
 
 var ChromeUtils = {
 
-    connecttotwitter: function () {
+    connectToTwitter: function () {
 
-        console.log("Inside Chrome Utils");
-        var request = {
-            type : "background.twitterRequestToken",
+        return new Promise(function(fulfill,reject){
+            var request = {
+                type : "background.twitterRequestToken",
+            };
+            chrome.runtime.sendMessage(request, function(response) {
+
+                if (response)
+                {
+                    fulfill(response);
+                }
+                else
+                {
+                    reject(response);
+                }
+            });
+        });
+    },
+
+    signOut: function(){
+        var request ={
+            type:"background.twitterSignOut",
         };
 
-        chrome.runtime.sendMessage(request, function(response) {
+        chrome.runtime.sendMessage(request, function (response) {
 
-            alert("Inside response: " + response);
         });
-
     }
 };
 

@@ -5,11 +5,12 @@ var TweetSmartActionCreator=require('../actions/TweetSmartActionCreator');
 var TweetButton = React.createClass({
     
    render: function(){
-    
-        var signedIn = this.props.signedInSignature != null;
+
+
+        var signedIn = this.props.signedIn;
         var uiState = this.props.uiState;
-              
-        if (signedIn === true)
+
+        if (signedIn == "true")
             {
                 if (uiState === 'tweeting')
                     {
