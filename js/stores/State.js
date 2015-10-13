@@ -19,11 +19,11 @@ var ApplicationState = {
     },
 
     get queuedTweets(){
-        return localStorage.getItem(Constants.KEY_QUEUEDTWEETS) != null ? localStorage.getItem(Constants.KEY_QUEUEDTWEETS) : [];
+        return localStorage.getItem(Constants.KEY_QUEUEDTWEETS) != null ? JSON.parse(localStorage.getItem(Constants.KEY_QUEUEDTWEETS)) : [];
     },
 
     set queuedTweets(value){
-        localStorage.setItem(Constants.KEY_QUEUEDTWEETS,value);
+        localStorage.setItem(Constants.KEY_QUEUEDTWEETS,JSON.stringify(value));
     },
 
     get signedIn() {

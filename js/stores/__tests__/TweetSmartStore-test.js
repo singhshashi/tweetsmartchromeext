@@ -3,6 +3,7 @@ jest.dontMock('../../constants/TweetSmartConstants');
 jest.dontMock('../TweetSmartStore');
 jest.dontMock('object-assign');
 jest.dontMock('../../utils/Utils');//shouldn't this be mocked?
+jest.dontMock('../State');
 
 describe('TweetSmartStore', function(){
 
@@ -97,7 +98,7 @@ describe('TweetSmartStore', function(){
 
     });  
     
-    it('each tweet should be less than 140 chars and more than 0',function(){
+    it('each tweet should be less than 141 chars and more than 0',function(){
         callback(actionTweetStormComposeMultipleTweets);
         var tweetStorm = TweetSmartStore.getTweetStorm();
         var count = tweetStorm.length;   
@@ -109,7 +110,7 @@ describe('TweetSmartStore', function(){
 
         for (i = 0; i < limit; i++) {
             var tweetChars = tweetStorm[i].text.length;
-            expect(tweetChars).toBeLessThan(140);
+            expect(tweetChars).toBeLessThan(141);
             expect(tweetChars).toBeGreaterThan(0);
         }             
 

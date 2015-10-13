@@ -119,10 +119,11 @@ AppDispatcher.register(function(action){
             TweetSmartStore.emitChange();
             break;  
         case TweetSmartActions.QUEUE_TWEETSTORM:
-            AppState.queuedTweets = [];
+            queuedTweets = [];
             _.each(action.tweetstorm, function(element, index){
-                AppState.queuedTweets.push({key: element.key, text:element.text, status: 0});
-            })
+                queuedTweets.push({key: element.key, text:element.text, status: 0});
+            });
+            AppState.queuedTweets = queuedTweets;
             UIState.composebox = false;
             UIState.tweetbutton = 'tweeting';
             TweetSmartStore.emitChange();
