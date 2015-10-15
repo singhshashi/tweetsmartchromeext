@@ -60,7 +60,6 @@ var TweetSmartApp = React.createClass({
     },
     
     render: function(){
-        console.log(this.state.appState.signedIn);
         return (
             <div>
               <Header signedInScreenName={this.state.appState.signedInScreenName}  />
