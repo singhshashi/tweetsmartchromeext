@@ -21,8 +21,8 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
 
     if (type == "background.twitterRequestToken")
     {
-        oauth.authorize(function(token,secret,userId,screenname){
-            sendResponse({success:true,userId:userId,screenName:screenname});
+        oauth.authorize().then(function(response){
+            sendResponse({success:true,userId:response.userId,screenName:response.screenName});
         });
         return true;
     }
@@ -32,6 +32,7 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
         oauth.clearTokens();
         sendResponse({success:true});
     }
+    
 
 });
 

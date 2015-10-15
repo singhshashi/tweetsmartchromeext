@@ -95,15 +95,20 @@ ChromeExOAuth.initBackgroundPage = function(oauth_config) {
  *         token {String} The OAuth access token.
  *         secret {String} The OAuth access token secret.
  */
-ChromeExOAuth.prototype.authorize = function(callback) {
-  if (this.hasToken()) {
-    callback(this.getToken(), this.getTokenSecret(),this.getUserId(), this.getScreenName());
-  } else {
-    window.chromeExOAuthOnAuthorize = function(token, secret, userId, screenName) {
-      callback(token, secret,userId,screenName);
-    };
-    chrome.tabs.create({ 'url' :chrome.extension.getURL(this.callback_page) });
-  }
+ChromeExOAuth.prototype.authorize = function() {
+  var self = this;
+  return new Promise(function(fulfill,reject){
+    if (self.hasToken()) {
+      var response = {token:self.getToken(),secret:self.getTokenSecret(),userId:self.getUserId(),screenName:self.getScreenName()};
+      fulfill(response);
+    } else {
+      window.chromeExOAuthOnAuthorize = function(token, secret, userId, screenName) {
+        var response = {token:token,secret:secret,userId:userId,screenName:screenName};
+        fulfill(response);
+      };
+      chrome.tabs.create({ 'url' :chrome.extension.getURL(self.callback_page) });
+    }
+  });
 };
 
 /**
