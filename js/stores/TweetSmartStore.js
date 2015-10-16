@@ -129,11 +129,14 @@ AppDispatcher.register(function(action){
             TweetSmartStore.emitChange();
             break;
         case TweetSmartActions.TWEET_SUCCESS:
-            var successfulTweet = _.find(AppState.queuedTweets, function(twt){
+            var queuedTweets = AppState.queuedTweets;
+            var successfulTweet = _.find(queuedTweets, function(twt){
                 return twt.status == 0;
             });
             successfulTweet.status = 1;
-            setTimeout(function(){TweetSmartStore.emitChange()}, 2500);
+            AppState.queuedTweets = queuedTweets;
+            AppState.lastSuccessfulTweetId = action.lastSuccessfulTweetId;
+            setTimeout(function(){TweetSmartStore.emitChange()}, 2100);
             break;
         case TweetSmartActions.TWEET_FAILURE:
             var unsuccesfulTweet = _.find(AppState.queuedTweets, function(twt){
@@ -148,6 +151,7 @@ AppDispatcher.register(function(action){
             UIState.tweetbutton = 'success';
             AppState.tweetStormText = '';
             AppState.queuedTweets = [];
+            AppState.lastSuccessfulTweetId = -1;
             TweetSmartStore.emitChange();
             break;
         case TweetSmartActions.TWEETSTORM_FAILURE:

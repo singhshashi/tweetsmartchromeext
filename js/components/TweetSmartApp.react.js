@@ -43,6 +43,7 @@ var TweetSmartApp = React.createClass({
             
             if (unsuccessfulTweet)
                 {
+                    console.log("Dominic Decoco");
                     return;
                 }
             
@@ -51,7 +52,8 @@ var TweetSmartApp = React.createClass({
             });
             if (toTweet)
                 {
-                    TweetSmartActionCreator.tweet(toTweet, this.state.signedInSignature);                    
+                    var lastSuccessfulTweetId = this.state.appState.lastSuccessfulTweetId;
+                    TweetSmartActionCreator.tweet(toTweet,lastSuccessfulTweetId);
                 }
             else{
                 TweetSmartActionCreator.tweetstormsuccess();

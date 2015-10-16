@@ -39,7 +39,7 @@ var TweetButton = React.createClass({
     }, 
         
     _onClick:function(){     
-        TweetSmartActionCreator.queuetweetstorm(this.props.tweetStorm,this.props.signedInSignature);
+        TweetSmartActionCreator.queuetweetstorm(this.props.tweetStorm);
     },
 
     _signIn:function(){

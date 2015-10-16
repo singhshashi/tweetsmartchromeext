@@ -35,6 +35,27 @@ var ChromeUtils = {
         chrome.runtime.sendMessage(request, function (response) {
 
         });
+    },
+
+    tweet: function (tweet, in_reply_to) {
+
+        console.log("ChromeUtils.tweet.in_reply_to: " + in_reply_to);
+        return new Promise(function (fulfill, reject) {
+            var request ={
+                type:"background.tweet",
+                tweet:tweet,
+                in_reply_to: in_reply_to
+            };
+            chrome.runtime.sendMessage(request,function(response){
+                if (response.success)
+                {
+                    fulfill(response);
+                }
+                else{
+                    reject(response);
+                }
+            })
+        });
     }
 };
 

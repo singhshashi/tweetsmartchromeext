@@ -147,8 +147,7 @@ ChromeExOAuth.prototype.hasToken = function() {
  *         "parameters" {Object} Query parameters to include in the request.
  *         "headers" {Object} Additional headers to include in the request.
  */
-ChromeExOAuth.prototype.sendSignedRequest = function(url, callback,
-                                                     opt_params) {
+ChromeExOAuth.prototype.sendSignedRequest = function(url, opt_params) {
   var method = opt_params && opt_params['method'] || 'GET';
   var body = opt_params && opt_params['body'] || null;
   var params = opt_params && opt_params['parameters'] || {};
@@ -156,11 +155,22 @@ ChromeExOAuth.prototype.sendSignedRequest = function(url, callback,
 
   var signedUrl = this.signURL(url, method, params);
 
-  ChromeExOAuth.sendRequest(method, signedUrl, headers, body, function (xhr) {
-    if (xhr.readyState == 4) {
-      callback(xhr.responseText, xhr);
-    }
+  return new Promise(function(fulfill,reject){
+    ChromeExOAuth.sendRequest(method, signedUrl, headers, body, function (xhr) {
+      if (xhr.readyState == 4) {
+        var response = {responseText:xhr.responseText,xhr:xhr};
+
+        if (xhr.status == 200)
+        {
+          fulfill(response);
+        }
+        else{
+          reject(response);
+        }
+      }
+    });
   });
+
 };
 
 /**

@@ -20,7 +20,7 @@
   "scripts": {
     "watch":"watchify js/app.js -o 'uglifyjs -cm  > bundle.min.js' -v -d",
     "sat": "npm run watch",
-    "build":"browserify js/app.js -t [envify --NODE_ENV production] | uglifyjs -cm > bin/bundle.min.js",
+    "build":"browserify js/app.js -t [envify --NODE_ENV production] -o bin/bundle.js",
     "start": "npm run build",
     "test": "jest"
   },
@@ -35,3 +35,4 @@
     "rootDir": "./js"
   }
 }
+

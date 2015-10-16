@@ -48,6 +48,14 @@ var ApplicationState = {
 
     set signedInScreenName(value) {
         localStorage.setItem(Constants.KEY_SIGNEDINSCREENNAME,value);
+    },
+
+    get lastSuccessfulTweetId(){
+        return localStorage.getItem(Constants.KEY_LASTSUCCESSFULTWEETID) != null ? localStorage.getItem(Constants.KEY_LASTSUCCESSFULTWEETID) : -1;
+    },
+
+    set lastSuccessfulTweetId(value) {
+        localStorage.setItem(Constants.KEY_LASTSUCCESSFULTWEETID,value);
     }
 }
 

@@ -32,9 +32,59 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
         oauth.clearTokens();
         sendResponse({success:true});
     }
-    
+
+    if (type == "background.tweet")
+    {
+        var url = "https://api.twitter.com/1.1/statuses/update.json";
+        var payload = {}
+        if (request.in_reply_to == -1)
+        {
+            payload ={
+                'method':'POST',
+                'parameters':{
+                    'status':request.tweet.text
+                }
+            }
+        }
+        else{
+            payload ={
+                'method':'POST',
+                'parameters':{
+                    'status':request.tweet.text,
+                    'in_reply_to_status_id':request.in_reply_to
+                }
+            }
+        }
+
+
+        oauth.sendSignedRequest(url,payload).then(onSuccessfulResponse,onErrorResponse).then(function(response){
+            console.log("Before sendResponse:");
+            console.log(response);
+           sendResponse({success:response.success,tweetId:response.statusId,message:response.message});
+        });
+
+        return true;
+    }
 
 });
 
+ function onSuccessfulResponse(response){
+    return new Promise(function(fulfill,reject){
+        console.log("OnSuccessfulResponse");
+        var parsedResponse = JSON.parse(response.xhr.response);
+        console.log(parsedResponse);
+        var data = {success:true,statusId:parsedResponse.id_str, message:response.responseText}
+        fulfill(data);
+    });
+ }
+
+ function onErrorResponse(response){
+     return new Promise(function (fulfill, reject) {
+         console.log("OnErrorResponse");
+         console.log(response);
+         var data = {success:false,statusId:-1,message:response.responseText};
+         fulfill(data);
+     });
+ }
 
 

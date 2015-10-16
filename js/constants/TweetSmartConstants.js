@@ -7,5 +7,6 @@ module.exports = {
     KEY_SIGNEDINUSERID: 'signedInTwitterUserId',
     KEY_SIGNEDINSCREENNAME: 'signedInTwitterScreenName',
     KEY_NUMBERINGPOSITIONATSTART: 'numberingPositionAtStart',
-    KEY_QUEUEDTWEETS: 'queuedTweets'
+    KEY_QUEUEDTWEETS: 'queuedTweets',
+    KEY_LASTSUCCESSFULTWEETID: 'lastSuccesfulTweetId'
 }
