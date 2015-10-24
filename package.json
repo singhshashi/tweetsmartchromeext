@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "description": "Tweet smarter by easily numbering all your tweets of a tweetstorm",
   "dependencies": {
+    "adm-zip": "^0.4.7",
     "flux": "^2.0.1",
     "keymirror": "~0.1.0",
     "object-assign": "^1.0.0",
@@ -18,9 +19,9 @@
     "watchify": "^2.1.1"
   },
   "scripts": {
-    "watch":"watchify js/app.js -o 'uglifyjs -cm  > bundle.min.js' -v -d",
+    "watch": "watchify js/app.js -o 'uglifyjs -cm  > bundle.min.js' -v -d",
     "sat": "npm run watch",
-    "build":"browserify js/app.js -t [envify --NODE_ENV production] -o bin/bundle.js",
+    "build": "browserify js/app.js -t [envify --NODE_ENV production] | uglifyjs -cm > bin/bundle.min.js",
     "start": "npm run build",
     "test": "jest"
   },
@@ -35,4 +36,3 @@
     "rootDir": "./js"
   }
 }
-

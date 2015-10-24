@@ -81,11 +81,12 @@ var TweetSmartStore = assign({}, EventEmitter.prototype, {
                     }
                 
 //                console.log(splitPointPairs);
-                    
+                        console.log(AppState);
                     _.each(splitPointPairs, function(splitPointPair,index){
                         
                         var numberedTweet = '';
-                       if (AppState.numberingPositionAtStart)
+
+                       if (AppState.numberingPositionAtStart == "true")
                        {
                          numberedTweet = (index + 1).toString() + '/' + this.length + ' ' +                  AppState.tweetStormText.substr(splitPointPair.start,splitPointPair.length);
                        }                   
@@ -164,7 +165,9 @@ AppDispatcher.register(function(action){
              TweetSmartStore.emitChange();
             break;
         case TweetSmartActions.CHANGE_NUMBERING_POSITION:
+            console.log("Changing numbering position to: " + action.numberingpositionatstart);
             AppState.numberingPositionAtStart = action.numberingpositionatstart;
+            console.log(AppState.numberingPositionAtStart);
             TweetSmartStore.emitChange();
             break;
         case TweetSmartActions.SIGN_IN:
