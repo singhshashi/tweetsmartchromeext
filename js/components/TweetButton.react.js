@@ -10,7 +10,7 @@ var TweetButton = React.createClass({
         var signedIn = this.props.signedIn;
         var uiState = this.props.uiState;
 
-        if (signedIn == "true")
+        if (signedIn == "1")
             {
                 if (uiState === 'tweeting')
                     {

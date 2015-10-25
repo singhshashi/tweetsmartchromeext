@@ -14,7 +14,7 @@ var updateStateOnTweetFailed = function(data){
 }
 
 var updateStateOnLoggedIn = function (data) {
-    AppDispatcher.dispatch({actionType:TweetSmartActions.SIGN_IN,signedInTwitterUserId:data.userId,signedInScreenName:data.screenName})
+    AppDispatcher.dispatch({actionType:TweetSmartActions.SIGN_IN_COMPLETE,signedInTwitterUserId:data.userId,signedInScreenName:data.screenName})
 }
 
 var TweetSmartActionCreator = {
@@ -46,7 +46,12 @@ var TweetSmartActionCreator = {
     },
 
     signin: function(){
-        ChromeUtils.connectToTwitter().then(updateStateOnLoggedIn);
+        AppDispatcher.dispatch({actionType:TweetSmartActions.SIGN_IN});
+        //ChromeUtils.connectToTwitter().then(updateStateOnLoggedIn);
+    },
+
+    checkSignedIn: function () {
+      ChromeUtils.connectToTwitter().then(updateStateOnLoggedIn);
     },
 
     signout: function () {

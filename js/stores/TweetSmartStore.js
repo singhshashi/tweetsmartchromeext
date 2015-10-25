@@ -171,13 +171,17 @@ AppDispatcher.register(function(action){
             TweetSmartStore.emitChange();
             break;
         case TweetSmartActions.SIGN_IN:
+            AppState.signedIn = 0;
+            TweetSmartStore.emitChange();
+            break;
+        case TweetSmartActions.SIGN_IN_COMPLETE:
             AppState.signedInTwitterUserId =  action.signedInTwitterUserId;
             AppState.signedInScreenName = action.signedInScreenName;
-            AppState.signedIn = true;
+            AppState.signedIn = 1;
             TweetSmartStore.emitChange();
             break;
         case TweetSmartActions.SIGN_OUT:
-            AppState.signedIn = false;
+            AppState.signedIn = -1;
             AppState.signedInScreenName = "";
             AppState.signedInTwitterUserId = -1;
             TweetSmartStore.emitChange();

@@ -12,5 +12,6 @@ module.exports = keyMirror({
     CHANGE_NUMBERING_POSITION: null,
     DEMO_COMPOSE: null,
     SIGN_IN:null,
+    SIGN_IN_COMPLETE:null,
     SIGN_OUT:null
 });

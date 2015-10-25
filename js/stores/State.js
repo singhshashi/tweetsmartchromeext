@@ -27,7 +27,7 @@ var ApplicationState = {
     },
 
     get signedIn() {
-        return localStorage.getItem(Constants.KEY_SIGNEDIN) != null ? localStorage.getItem(Constants.KEY_SIGNEDIN) : false;
+        return localStorage.getItem(Constants.KEY_SIGNEDIN) != null ? localStorage.getItem(Constants.KEY_SIGNEDIN) : -1;
     },
 
     set signedIn(value) {

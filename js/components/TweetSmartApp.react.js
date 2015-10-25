@@ -28,6 +28,10 @@ var TweetSmartApp = React.createClass({
     
     componentDidMount: function(){
         TweetSmartStore.addChangeListener(this._onChange);
+        if (this.state.appState.signedIn == '0') {
+            console.log("Checking Signed in");
+            TweetSmartActionCreator.checkSignedIn();
+        }
     },
     
     componentWillUnmount: function(){
@@ -58,7 +62,11 @@ var TweetSmartApp = React.createClass({
             else{
                 TweetSmartActionCreator.tweetstormsuccess();
             }
-        }
+        } else if (this.state.appState.signedIn == '0') {
+        console.log("Checking Signed in");
+        TweetSmartActionCreator.checkSignedIn();
+    }
+
     },
     
     render: function(){
