@@ -61,16 +61,6 @@ function breakTextIntoTweets(explicitlySplitTweetText, tweets) {
 
             tweets.push(explicitlySplitTweetText.substr(splitPointPair.start,splitPointPair.length));
 
-            //var numberedTweet = '';
-            //
-            //if (AppState.numberingPositionAtStart == "true")
-            //{
-            //    numberedTweet = (index + 1).toString() + '/' + this.length + ' ' +                  explicitlySplitTweetText.substr(splitPointPair.start,splitPointPair.length);
-            //}
-            //else{
-            //    numberedTweet =  explicitlySplitTweetText.substr(splitPointPair.start,splitPointPair.length) + ' ' + (index + 1).toString() + '/' + this.length;
-            //}
-            //tweetStorm.push({key:index,text:numberedTweet});
         },splitPointPairs);
     }
 
