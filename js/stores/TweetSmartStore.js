@@ -15,6 +15,66 @@ var CHANGE_EVENT = 'change';
 const WORD_SEPARATOR = ' ';
 
 
+function breakTextIntoTweets(explicitlySplitTweetText, tweets) {
+    
+    var spaceIndexArr = Utils.getArrayOfIndices(explicitlySplitTweetText,WORD_SEPARATOR);
+    if (Utils.getMaxOfNumberArray(spaceIndexArr) <= TweetSmartConstants.TWEET_LENGTH)
+    {
+        tweets.push(explicitlySplitTweetText);
+    }
+    else{
+        var splitPoints = [];
+        splitPoints.push(0);//initialize with 0 which is used later when splitting using substr
+        var i;
+        var possibleNumberOfTweets = Math.floor(explicitlySplitTweetText.length/TweetSmartConstants.TWEET_LENGTH);
+
+        var index = 0;
+        while(index != null)
+        {
+            var neighbours = Utils.getNeighboursInSortedNumberArray(spaceIndexArr, index + TweetSmartConstants.TWEET_LENGTH);
+            if (neighbours.rightSideNeighbour == null)
+            {
+                index = null;
+            }
+            else{
+                splitPoints.push(neighbours.leftSideNeighbour);
+                index = neighbours.leftSideNeighbour;
+            }
+        }
+
+
+        var splitPointPairs = [];
+        var i;
+        var limit = splitPoints.length;
+        for (i = 0; i < limit; i++) {
+            if(isNaN(splitPoints[i+1]))
+            {
+                splitPointPairs.push({start:splitPoints[i],length:explicitlySplitTweetText.length - splitPoints[i]});
+            }
+            else{
+                splitPointPairs.push({start:splitPoints[i],length: splitPoints[i+1] - splitPoints[i]});
+            }
+        }
+
+//                console.log(splitPointPairs);
+        _.each(splitPointPairs, function(splitPointPair,index){
+
+            tweets.push(explicitlySplitTweetText.substr(splitPointPair.start,splitPointPair.length));
+
+            //var numberedTweet = '';
+            //
+            //if (AppState.numberingPositionAtStart == "true")
+            //{
+            //    numberedTweet = (index + 1).toString() + '/' + this.length + ' ' +                  explicitlySplitTweetText.substr(splitPointPair.start,splitPointPair.length);
+            //}
+            //else{
+            //    numberedTweet =  explicitlySplitTweetText.substr(splitPointPair.start,splitPointPair.length) + ' ' + (index + 1).toString() + '/' + this.length;
+            //}
+            //tweetStorm.push({key:index,text:numberedTweet});
+        },splitPointPairs);
+    }
+
+}
 var TweetSmartStore = assign({}, EventEmitter.prototype, {
     
     getAppState: function(){
@@ -37,65 +97,44 @@ var TweetSmartStore = assign({}, EventEmitter.prototype, {
             {
                 return AppState.queuedTweets;
             }
-        
         var tweetStorm = [];
         if (AppState.tweetStormText.length > 0)
         {
-            var spaceIndexArr = Utils.getArrayOfIndices(AppState.tweetStormText,WORD_SEPARATOR);
-            if (Utils.getMaxOfNumberArray(spaceIndexArr) <= TweetSmartConstants.TWEET_LENGTH)
-            {
-                tweetStorm.push({key:0,text:AppState.tweetStormText});
-            }
-            else{
-                    var splitPoints = [];
-                    splitPoints.push(0);//initialize with 0 which is used later when splitting using substr
-                    var i;
-                    var possibleNumberOfTweets = Math.floor(AppState.tweetStormText.length/TweetSmartConstants.TWEET_LENGTH);
+            var explicitlySplitTweetTexts = AppState.tweetStormText.split("\n\n");
 
-                    var index = 0;
-                    while(index != null)
-                        {
-                            var neighbours = Utils.getNeighboursInSortedNumberArray(spaceIndexArr, index + TweetSmartConstants.TWEET_LENGTH);
-                            if (neighbours.rightSideNeighbour == null)
-                                {
-                                    index = null;
-                                }
-                            else{
-                                    splitPoints.push(neighbours.leftSideNeighbour);
-                                    index = neighbours.leftSideNeighbour;                                
-                            }
-                        }                    
-                    
-                
-                    var splitPointPairs = [];
-                    var i;
-                    var limit = splitPoints.length;
-                    for (i = 0; i < limit; i++) {
-                        if(isNaN(splitPoints[i+1]))
+            for(var i=0; i < explicitlySplitTweetTexts.length; i++ ){
+                var tweets = [];
+                breakTextIntoTweets(explicitlySplitTweetTexts[i],tweets);
+
+                if ( explicitlySplitTweetTexts.length === 1 && tweets.length === 1)
+                {
+                    tweetStorm.push({key:0,text:tweets[0]});
+                }else{
+
+                    for(var j=0;j<tweets.length;j++){
+                        var numberedTweet = "";
+
+                        if (!(tweets[j].trim().length === 0)){
+
+                            if (AppState.numberingPositionAtStart == "true")
                             {
-                                splitPointPairs.push({start:splitPoints[i],length:AppState.tweetStormText.length - splitPoints[i]});
+                                numberedTweet = (tweetStorm.length + 1) + "/!%iamtit%! " + tweets[j];
                             }
-                        else{
-                            splitPointPairs.push({start:splitPoints[i],length: splitPoints[i+1] - splitPoints[i]});                            
+                            else{
+                                numberedTweet = tweets[j] + " " + (tweetStorm.length + 1) + "/!%iamtit%!";
+                            }
+
+                            tweetStorm.push({key:tweetStorm.length,text:numberedTweet});
                         }
                     }
-                
-//                console.log(splitPointPairs);
-                        console.log(AppState);
-                    _.each(splitPointPairs, function(splitPointPair,index){
-                        
-                        var numberedTweet = '';
-
-                       if (AppState.numberingPositionAtStart == "true")
-                       {
-                         numberedTweet = (index + 1).toString() + '/' + this.length + ' ' +                  AppState.tweetStormText.substr(splitPointPair.start,splitPointPair.length);
-                       }                   
-else{
-      numberedTweet =  AppState.tweetStormText.substr(splitPointPair.start,splitPointPair.length) + ' ' + (index + 1).toString() + '/' + this.length;
-}
-                        tweetStorm.push({key:index,text:numberedTweet});
-                    },splitPointPairs);                
-            }            
+                }
+            }
+            var totalTweets = tweetStorm.length;
+            console.log("TotalTweets:" + totalTweets);
+            for(var i=0;i<tweetStorm.length;i++){
+                var tweet = tweetStorm[i].text.replace("!%iamtit%!",totalTweets);
+                tweetStorm[i].text = tweet;
+            }
         }        
         return tweetStorm;
     }, 
