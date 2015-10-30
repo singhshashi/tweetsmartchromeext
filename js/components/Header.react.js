@@ -20,11 +20,13 @@ var Header = React.createClass({
             <div>
                 <nav className="navbar navbar-default navbar-static-top">
                     <div className="container-fluid">
-                        <div className="navbar-header pull-left">
-                            <span className="navbar-brand">TweetSmart</span>
-                        </div>
-                        <div className="navbar-header pull-right">
-                            <p className="navbar-text">{signedInText}. <a href="#" className="navbar-link" onClick={this.signOut}>{singOutLinkText}</a></p>
+                        <div className="navbar-header">
+                            <a href="#" className="navbar-brand">
+                              <img alt="TweetSmart" src="images/logo_main.png" />
+                            </a>
+                            <span className="mod-navbar-toggle">
+                                <span className="navbar-text navbar-right">{signedInText} &nbsp;&nbsp; <a href="#" className="navbar-link" onClick={this.signOut}>{singOutLinkText}</a></span>
+                            </span>
                         </div>
                     </div>
                 </nav>
