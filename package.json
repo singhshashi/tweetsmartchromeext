@@ -1,6 +1,6 @@
 {
   "name": "tweetsmart",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "Tweet smarter by easily numbering all your tweets of a tweetstorm",
   "dependencies": {
     "adm-zip": "^0.4.7",
